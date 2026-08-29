@@ -129,9 +129,6 @@ export interface HRDocument {
   fileSize: string;
   uploadedBy: string;
   uploadedAt: string;
-  status?: 'Approved' | 'Rejected' | 'Pending';
-  approvedBy?: string;
-  comment?: string;
 }
 
 export interface PerformanceReview {
