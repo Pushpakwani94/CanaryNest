@@ -108,15 +108,48 @@ export const dataService = {
     return localStore.subscribe('employees', callback);
   },
 
-  addEmployee: async (emp: Omit<Employee, 'id'>) => {
+  addEmployee: async (emp: Omit<Employee, 'id'> & { initialPassword?: string }) => {
     const id = 'EMP' + Math.floor(100 + Math.random() * 900);
-    const newEmp: Employee = { ...emp, id, employeeCode: id };
+    const initialPass = emp.initialPassword || 'Canary@123';
+    const newEmp: Employee = { 
+      ...emp, 
+      id, 
+      employeeCode: emp.employeeCode || id,
+      initialPassword: initialPass
+    };
+
     if (dataService.isLive() && db) {
       await setDoc(doc(db, 'employees', id), newEmp);
     }
+    
     localStore.employees = [newEmp, ...localStore.employees];
+
+    // Create user login account for new employee
+    const newUser: UserProfile = {
+      uid: 'usr_' + id,
+      email: newEmp.email,
+      password: initialPass,
+      role: 'EMPLOYEE',
+      employeeId: id,
+      displayName: `${newEmp.firstName} ${newEmp.lastName}`,
+      photoURL: newEmp.photoURL,
+      createdAt: new Date().toISOString().split('T')[0],
+    };
+    localStore.users = [newUser, ...localStore.users];
+
+    // Create default leave balance for new employee
+    const newLb: LeaveBalance = {
+      id: 'lb_' + id,
+      employeeId: id,
+      casualLeave: { total: 12, used: 0, available: 12.0 },
+      sickLeave: { total: 8, used: 0, available: 8.0 },
+      privilegeLeave: { total: 15, used: 0, available: 15.0 },
+      compOff: { total: 4, used: 0, available: 4.0 },
+    };
+    localStore.leaveBalances = [newLb, ...localStore.leaveBalances];
+
     localStore.notify('employees');
-    dataService.logAudit('CREATE_EMPLOYEE', `Added employee ${newEmp.firstName} ${newEmp.lastName} (${id})`);
+    dataService.logAudit('CREATE_EMPLOYEE', `Added employee ${newEmp.firstName} ${newEmp.lastName} (${id}) with password ${initialPass}`);
     return newEmp;
   },
 
@@ -127,6 +160,14 @@ export const dataService = {
     localStore.employees = localStore.employees.map(e => e.id === id ? { ...e, ...updates } : e);
     localStore.notify('employees');
     dataService.logAudit('UPDATE_EMPLOYEE', `Updated employee ${id}`);
+  },
+
+  updateUserPassword: async (email: string, newPass: string) => {
+    localStore.users = localStore.users.map(u => 
+      u.email.toLowerCase() === email.toLowerCase() ? { ...u, password: newPass } : u
+    );
+    localStore.saveToLocalStorage();
+    dataService.logAudit('PASSWORD_UPDATE', `Updated password for ${email}`);
   },
 
   deleteEmployee: async (id: string) => {

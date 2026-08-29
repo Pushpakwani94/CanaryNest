@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, MapPin, Building2, Calendar, ShieldCheck, Edit, Camera, Save } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Building2, Calendar, ShieldCheck, Edit, Camera, Save, Lock, CheckCircle2 } from 'lucide-react';
 import { Button, Card, Badge } from '../../components/common/UIComponents';
 import { useAuth } from '../../context/AuthContext';
+import { dataService } from '../../services/db';
 
 export const MyProfilePage: React.FC = () => {
   const { userProfile } = useAuth();
@@ -9,20 +10,52 @@ export const MyProfilePage: React.FC = () => {
   const [phone, setPhone] = useState('+91 98765 43210');
   const [location, setLocation] = useState('Pune, Maharashtra');
 
+  // Password Change State
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passError, setPassError] = useState('');
+  const [passSuccess, setPassSuccess] = useState('');
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPassError('');
+    setPassSuccess('');
+
+    if (!newPassword || newPassword.length < 6) {
+      setPassError('Password must be at least 6 characters long.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPassError('New passwords do not match.');
+      return;
+    }
+
+    if (userProfile?.email) {
+      await dataService.updateUserPassword(userProfile.email, newPassword);
+      setPassSuccess('Password updated successfully! You can use this new password for your next login.');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setTimeout(() => setPassSuccess(''), 4000);
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-4xl">
       
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">My Profile</h1>
-          <p className="text-xs text-slate-400 font-medium">View and update your personal employee details.</p>
+          <p className="text-xs text-slate-400 font-medium">View and update your personal details and portal password.</p>
         </div>
         <Button
           variant={isEditing ? 'success' : 'outline'}
           icon={<Edit className="w-4 h-4" />}
           onClick={() => setIsEditing(!isEditing)}
         >
-          {isEditing ? 'Save Changes' : 'Edit Contact Details'}
+          {isEditing ? 'Save Details' : 'Edit Contact Details'}
         </Button>
       </div>
 
@@ -46,8 +79,8 @@ export const MyProfilePage: React.FC = () => {
               <Badge variant="green">Active</Badge>
             </div>
             <p className="text-sm font-bold text-brand-600">QA Engineer</p>
-            <p className="text-xs text-slate-500 font-medium">Quality Assurance Department • Employee Code: EMP00123</p>
-            <p className="text-xs text-slate-400 font-medium mt-2">Joined 12 Jan 2024 (1 Year 4 Months)</p>
+            <p className="text-xs text-slate-500 font-medium">Quality Assurance Department • Employee Code: {userProfile?.employeeId || 'EMP00123'}</p>
+            <p className="text-xs text-slate-400 font-medium mt-2">Joined 12 Jan 2024</p>
           </div>
         </div>
       </Card>
@@ -118,6 +151,73 @@ export const MyProfilePage: React.FC = () => {
         </Card>
 
       </div>
+
+      {/* Change Password Card */}
+      <Card className="space-y-4">
+        <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
+          <Lock className="w-4 h-4 text-brand-500" />
+          <h3 className="font-extrabold text-slate-800 text-sm uppercase tracking-wider">
+            Account Password & Security
+          </h3>
+        </div>
+
+        {passSuccess && (
+          <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-bold text-emerald-700 flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            {passSuccess}
+          </div>
+        )}
+
+        {passError && (
+          <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs font-bold text-rose-600">
+            {passError}
+          </div>
+        )}
+
+        <form onSubmit={handlePasswordChange} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Current Password</label>
+              <input
+                type="password"
+                required
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-400 font-medium"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">New Password</label>
+              <input
+                type="password"
+                required
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-400 font-medium"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Confirm New Password</label>
+              <input
+                type="password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-400 font-medium"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-2">
+            <Button variant="primary" type="submit" icon={<Save className="w-4 h-4" />}>
+              Update Password
+            </Button>
+          </div>
+        </form>
+      </Card>
 
     </div>
   );

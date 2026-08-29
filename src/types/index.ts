@@ -3,6 +3,7 @@ export type UserRole = 'HR_ADMIN' | 'EMPLOYEE';
 export interface UserProfile {
   uid: string;
   email: string;
+  password?: string;
   role: UserRole;
   employeeId: string; // Linked employee ID
   displayName: string;
@@ -17,6 +18,8 @@ export interface Employee {
   firstName: string;
   lastName: string;
   email: string;
+  password?: string;
+  initialPassword?: string;
   phone: string;
   designation: string;
   departmentId: string;

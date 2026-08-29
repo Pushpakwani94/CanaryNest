@@ -34,8 +34,11 @@ export const EmployeesPage: React.FC = () => {
     salary: 650000,
     location: 'Mumbai, Maharashtra',
     status: 'Active' as const,
+    initialPassword: 'Canary@123',
     photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
   });
+
+  const [createdCredentials, setCreatedCredentials] = useState<{ email: string; pass: string } | null>(null);
 
   useEffect(() => {
     const unsubEmp = dataService.getEmployees(setEmployees);
@@ -63,10 +66,14 @@ export const EmployeesPage: React.FC = () => {
     e.preventDefault();
     const deptObj = departments.find(d => d.id === formData.departmentId);
     const generatedCode = 'EMP' + Math.floor(100 + Math.random() * 900);
-    await dataService.addEmployee({
+    const created = await dataService.addEmployee({
       ...formData,
       employeeCode: generatedCode,
       departmentName: deptObj ? deptObj.name : 'General',
+    });
+    setCreatedCredentials({
+      email: created.email,
+      pass: created.initialPassword || 'Canary@123',
     });
     setIsAddModalOpen(false);
     resetForm();
@@ -91,6 +98,7 @@ export const EmployeesPage: React.FC = () => {
       salary: 650000,
       location: 'Mumbai, Maharashtra',
       status: 'Active',
+      initialPassword: 'Canary@123',
       photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     });
   };
@@ -319,6 +327,21 @@ export const EmployeesPage: React.FC = () => {
             </div>
           </div>
 
+          <div>
+            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Initial Password for Login</label>
+            <input
+              type="text"
+              required
+              value={formData.initialPassword}
+              onChange={(e) => setFormData({ ...formData, initialPassword: e.target.value })}
+              placeholder="e.g. Canary@123"
+              className="w-full px-3 py-2 text-xs bg-orange-50 border border-brand-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-400 font-bold text-brand-700"
+            />
+            <p className="text-[11px] text-slate-400 font-medium mt-1">
+              Employee will use this initial password to log in for the first time.
+            </p>
+          </div>
+
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
             <Button variant="outline" type="button" onClick={() => setIsAddModalOpen(false)}>
               Cancel
@@ -329,6 +352,33 @@ export const EmployeesPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+
+      {/* Created Credentials Success Modal Banner */}
+      {createdCredentials && (
+        <Modal
+          isOpen={Boolean(createdCredentials)}
+          onClose={() => setCreatedCredentials(null)}
+          title="🎉 Employee Account Created!"
+        >
+          <div className="space-y-4">
+            <p className="text-xs text-slate-600 font-medium">
+              The employee record and login account have been successfully created with the following credentials:
+            </p>
+
+            <div className="p-4 bg-orange-50 border border-orange-200 rounded-2xl space-y-2 text-xs">
+              <p><span className="text-slate-400 font-semibold uppercase">Login Email:</span> <span className="font-extrabold text-slate-800">{createdCredentials.email}</span></p>
+              <p><span className="text-slate-400 font-semibold uppercase">Initial Password:</span> <span className="font-extrabold text-brand-600">{createdCredentials.pass}</span></p>
+              <p><span className="text-slate-400 font-semibold uppercase">Role Access:</span> <span className="font-extrabold text-emerald-600">EMPLOYEE PORTAL</span></p>
+            </div>
+
+            <div className="flex justify-end">
+              <Button variant="primary" onClick={() => setCreatedCredentials(null)}>
+                Got It
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
 
       {/* View Employee Detail Modal */}
       {selectedEmployee && (
