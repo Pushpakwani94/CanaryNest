@@ -37,7 +37,8 @@ class LocalStore {
 
   loadFromLocalStorage() {
     try {
-      const saved = localStorage.getItem('canarynest_db_v1');
+      localStorage.removeItem('canarynest_db_v1');
+      const saved = localStorage.getItem('canarynest_db_v2');
       if (saved) {
         const parsed = JSON.parse(saved);
         Object.assign(this, parsed);
@@ -49,7 +50,7 @@ class LocalStore {
 
   saveToLocalStorage() {
     try {
-      localStorage.setItem('canarynest_db_v1', JSON.stringify({
+      localStorage.setItem('canarynest_db_v2', JSON.stringify({
         employees: this.employees,
         departments: this.departments,
         attendance: this.attendance,
@@ -393,13 +394,28 @@ export const dataService = {
 
   addDocument: async (docData: Omit<HRDocument, 'id' | 'uploadedAt'>) => {
     const id = 'doc_' + Date.now();
-    const newDoc: HRDocument = { ...docData, id, uploadedAt: new Date().toISOString().split('T')[0] };
+    const newDoc: HRDocument = { 
+      ...docData, 
+      id, 
+      status: docData.status || 'Approved',
+      uploadedAt: new Date().toISOString().split('T')[0] 
+    };
     if (dataService.isLive() && db) {
       await setDoc(doc(db, 'documents', id), newDoc);
     }
     localStore.documents = [newDoc, ...localStore.documents];
     localStore.notify('documents');
     return newDoc;
+  },
+
+  updateDocumentStatus: async (id: string, status: 'Approved' | 'Rejected', comment?: string, adminName: string = 'Admin User') => {
+    const updates = { status, comment, approvedBy: adminName };
+    if (dataService.isLive() && db) {
+      await updateDoc(doc(db, 'documents', id), updates);
+    }
+    localStore.documents = localStore.documents.map(d => d.id === id ? { ...d, ...updates } : d);
+    localStore.notify('documents');
+    dataService.logAudit('DOCUMENT_STATUS', `${adminName} marked document ${id} as ${status}`);
   },
 
   // Payslips & Payroll

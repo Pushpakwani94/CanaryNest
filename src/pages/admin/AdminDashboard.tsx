@@ -34,22 +34,30 @@ export const AdminDashboard: React.FC = () => {
   const pendingLeaves = leaves.filter(l => l.status === 'Pending');
   const pendingExpenses = expenses.filter(e => e.status === 'Pending');
 
+  const activeCount = employees.filter(e => e.status === 'Active').length;
+  const probationCount = employees.filter(e => e.status === 'Probation').length;
+  const onLeaveCount = employees.filter(e => e.status === 'On Leave').length;
+  const inactiveCount = employees.filter(e => e.status === 'Inactive').length;
+  const totalEmpCount = employees.length;
+
+  const totalPayrollAmt = employees.reduce((sum, emp) => sum + Math.round((emp.salary || 0) / 12), 0);
+
   // Spline chart attendance data
   const attendanceTrendData = [
-    { date: '01 May', Present: 160, Absent: 18, OnLeave: 30 },
-    { date: '08 May', Present: 180, Absent: 15, OnLeave: 25 },
-    { date: '15 May', Present: 175, Absent: 20, OnLeave: 32 },
-    { date: '22 May', Present: 195, Absent: 12, OnLeave: 22 },
-    { date: '28 May', Present: 186, Absent: 14, OnLeave: 28 },
+    { date: '01 May', Present: Math.max(1, activeCount - 1), Absent: 0, OnLeave: 0 },
+    { date: '08 May', Present: activeCount, Absent: 0, OnLeave: 0 },
+    { date: '15 May', Present: activeCount, Absent: 0, OnLeave: 0 },
+    { date: '22 May', Present: activeCount, Absent: 0, OnLeave: 0 },
+    { date: '28 May', Present: activeCount, Absent: 0, OnLeave: 0 },
   ];
 
   // Employee status pie chart data
   const statusPieData = [
-    { name: 'Active', value: 200, color: '#10b981' },
-    { name: 'Probation', value: 25, color: '#3b82f6' },
-    { name: 'On Leave', value: 18, color: '#f59e0b' },
-    { name: 'Inactive', value: 5, color: '#ef4444' },
-  ];
+    { name: 'Active', value: activeCount || 1, color: '#10b981' },
+    { name: 'Probation', value: probationCount, color: '#3b82f6' },
+    { name: 'On Leave', value: onLeaveCount, color: '#f59e0b' },
+    { name: 'Inactive', value: inactiveCount, color: '#ef4444' },
+  ].filter(item => item.value > 0);
 
   return (
     <div className="space-y-6">
@@ -58,37 +66,37 @@ export const AdminDashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
         <StatCard
           title="Total Employees"
-          value={employees.length > 0 ? employees.length : 248}
-          trend="+12 this month"
+          value={totalEmpCount}
+          trend="+1 this month"
           trendUp={true}
           icon={<Users className="w-5 h-5 text-orange-600" />}
           iconBgColor="bg-orange-50 text-orange-600"
         />
         <StatCard
           title="Present Today"
-          value="186"
-          subtitle="75% of total"
+          value={activeCount}
+          subtitle={`${Math.round((activeCount / (totalEmpCount || 1)) * 100)}% of total`}
           icon={<CalendarCheck className="w-5 h-5 text-emerald-600" />}
           iconBgColor="bg-emerald-50 text-emerald-600"
         />
         <StatCard
           title="On Leave Today"
-          value="28"
-          subtitle="11% of total"
+          value={onLeaveCount}
+          subtitle={`${Math.round((onLeaveCount / (totalEmpCount || 1)) * 100)}% of total`}
           icon={<Clock className="w-5 h-5 text-blue-600" />}
           iconBgColor="bg-blue-50 text-blue-600"
         />
         <StatCard
           title="New Joinees"
-          value="15"
-          trend="+5 this month"
+          value={totalEmpCount}
+          trend="Active"
           trendUp={true}
           icon={<UserPlus className="w-5 h-5 text-purple-600" />}
           iconBgColor="bg-purple-50 text-purple-600"
         />
         <StatCard
-          title="Total Payroll (May)"
-          value="₹ 48,75,000"
+          title="Monthly Payroll"
+          value={`₹ ${totalPayrollAmt.toLocaleString()}`}
           subtitle="Processed"
           icon={<Wallet className="w-5 h-5 text-amber-600" />}
           iconBgColor="bg-amber-50 text-amber-600"
@@ -170,7 +178,7 @@ export const AdminDashboard: React.FC = () => {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <span className="text-2xl font-extrabold text-slate-800">248</span>
+              <span className="text-2xl font-extrabold text-slate-800">{totalEmpCount}</span>
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</span>
             </div>
           </div>
@@ -181,7 +189,7 @@ export const AdminDashboard: React.FC = () => {
                   <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
                   {item.name}
                 </span>
-                <span className="text-slate-800 font-bold">{item.value} ({Math.round((item.value/248)*100)}%)</span>
+                <span className="text-slate-800 font-bold">{item.value} ({Math.round((item.value / (totalEmpCount || 1)) * 100)}%)</span>
               </div>
             ))}
           </div>

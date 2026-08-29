@@ -42,10 +42,17 @@ export const Header: React.FC<{ title?: string }> = () => {
           />
         </div>
 
-        {/* Date Selector Pill */}
+        {/* Real Live Date Selector Pill */}
         <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200/70 rounded-xl text-xs font-semibold text-slate-600">
           <CalendarIcon className="w-3.5 h-3.5 text-brand-500" />
-          <span>28 May 2025, Wednesday</span>
+          <span>
+            {new Date().toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+              weekday: 'long',
+            })}
+          </span>
         </div>
 
         {/* Role Quick Switch Button (Only visible in HR Admin mode) */}

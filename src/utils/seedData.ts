@@ -40,12 +40,12 @@ export const initialUsers: UserProfile[] = [
 ];
 
 export const initialDepartments: Department[] = [
-  { id: 'dept_1', name: 'Engineering', code: 'ENG', headName: 'Alex Mercer', employeeCount: 85, description: 'Software Development & Infrastructure', status: 'Active' },
-  { id: 'dept_2', name: 'Quality Assurance', code: 'QA', headName: 'Sarah Jenkins', employeeCount: 24, description: 'Quality Assurance & Testing', status: 'Active' },
-  { id: 'dept_3', name: 'Human Resources', code: 'HR', headName: 'Priya Sharma', employeeCount: 15, description: 'Talent & Workplace Operations', status: 'Active' },
-  { id: 'dept_4', name: 'Finance', code: 'FIN', headName: 'Amit Verma', employeeCount: 18, description: 'Financial Accounting & Payroll', status: 'Active' },
-  { id: 'dept_5', name: 'Marketing', code: 'MKT', headName: 'Sneha Patil', employeeCount: 32, description: 'Brand Growth & Communications', status: 'Active' },
-  { id: 'dept_6', name: 'Sales', code: 'SLS', headName: 'Vikram Singh', employeeCount: 74, description: 'Enterprise Sales & Partnerships', status: 'Active' },
+  { id: 'dept_1', name: 'Engineering', code: 'ENG', headName: 'Department Lead', employeeCount: 1, description: 'Software Development & Infrastructure', status: 'Active' },
+  { id: 'dept_2', name: 'Quality Assurance', code: 'QA', headName: 'Rahul Patil', employeeCount: 1, description: 'Quality Assurance & Testing', status: 'Active' },
+  { id: 'dept_3', name: 'Human Resources', code: 'HR', headName: 'Admin User', employeeCount: 1, description: 'Talent & Workplace Operations', status: 'Active' },
+  { id: 'dept_4', name: 'Finance', code: 'FIN', headName: 'Finance Lead', employeeCount: 0, description: 'Financial Accounting & Payroll', status: 'Active' },
+  { id: 'dept_5', name: 'Marketing', code: 'MKT', headName: 'Marketing Lead', employeeCount: 0, description: 'Brand Growth & Communications', status: 'Active' },
+  { id: 'dept_6', name: 'Sales', code: 'SLS', headName: 'Sales Lead', employeeCount: 0, description: 'Enterprise Sales & Partnerships', status: 'Active' },
 ];
 
 export const initialEmployees: Employee[] = [
@@ -85,96 +85,11 @@ export const initialEmployees: Employee[] = [
     salary: 1500000,
     bankDetails: { accountNumber: '112233445566', bankName: 'ICICI Bank', ifscCode: 'ICIC0005678' },
     photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'EMP002',
-    employeeCode: 'EMP002',
-    firstName: 'Rohan',
-    lastName: 'Mehta',
-    email: 'rohan.mehta@canarynest.com',
-    phone: '+91 98123 45678',
-    designation: 'Backend Developer',
-    departmentId: 'dept_1',
-    departmentName: 'Engineering',
-    joiningDate: '26 May 2025',
-    status: 'Active',
-    location: 'Bengaluru, Karnataka',
-    salary: 1200000,
-    photoURL: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'EMP003',
-    employeeCode: 'EMP003',
-    firstName: 'Priya',
-    lastName: 'Sharma',
-    email: 'priya.sharma@canarynest.com',
-    phone: '+91 98234 56789',
-    designation: 'HR Executive',
-    departmentId: 'dept_3',
-    departmentName: 'Human Resources',
-    joiningDate: '24 May 2025',
-    status: 'Active',
-    location: 'Mumbai, Maharashtra',
-    salary: 750000,
-    photoURL: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'EMP004',
-    employeeCode: 'EMP004',
-    firstName: 'Amit',
-    lastName: 'Verma',
-    email: 'amit.verma@canarynest.com',
-    phone: '+91 98345 67890',
-    designation: 'Senior Accountant',
-    departmentId: 'dept_4',
-    departmentName: 'Finance',
-    joiningDate: '23 May 2025',
-    status: 'Active',
-    location: 'Delhi NCR',
-    salary: 950000,
-    photoURL: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'EMP005',
-    employeeCode: 'EMP005',
-    firstName: 'Sneha',
-    lastName: 'Patil',
-    email: 'sneha.patil@canarynest.com',
-    phone: '+91 98456 78901',
-    designation: 'Marketing Executive',
-    departmentId: 'dept_5',
-    departmentName: 'Marketing',
-    joiningDate: '22 May 2025',
-    status: 'Active',
-    location: 'Pune, Maharashtra',
-    salary: 680000,
-    photoURL: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'EMP006',
-    employeeCode: 'EMP006',
-    firstName: 'Vikram',
-    lastName: 'Singh',
-    email: 'vikram.singh@canarynest.com',
-    phone: '+91 98567 89012',
-    designation: 'Sales Executive',
-    departmentId: 'dept_6',
-    departmentName: 'Sales',
-    joiningDate: '21 May 2025',
-    status: 'Active',
-    location: 'Mumbai, Maharashtra',
-    salary: 800000,
-    photoURL: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&auto=format&fit=crop&q=80',
   }
 ];
 
 export const initialAttendanceRecords: AttendanceRecord[] = [
-  { id: 'att_1', employeeId: 'EMP00123', employeeName: 'Rahul Patil', date: '2025-05-28', checkInTime: '09:02 AM', checkOutTime: '06:15 PM', status: 'Present', workHours: 9.2, notes: 'On Time' },
-  { id: 'att_2', employeeId: 'EMP00123', employeeName: 'Rahul Patil', date: '2025-05-27', checkInTime: '09:15 AM', checkOutTime: '06:05 PM', status: 'Late', workHours: 8.8, notes: 'Traffic delay' },
-  { id: 'att_3', employeeId: 'EMP00123', employeeName: 'Rahul Patil', date: '2025-05-26', checkInTime: '09:00 AM', checkOutTime: '06:00 PM', status: 'WFH', workHours: 9.0, notes: 'Pre-approved WFH' },
-  { id: 'att_4', employeeId: 'EMP002', employeeName: 'Rohan Mehta', date: '2025-05-28', checkInTime: '09:15 AM', checkOutTime: '06:30 PM', status: 'Present', workHours: 9.25 },
-  { id: 'att_5', employeeId: 'EMP003', employeeName: 'Priya Sharma', date: '2025-05-28', checkInTime: '08:45 AM', checkOutTime: '05:50 PM', status: 'Present', workHours: 9.08 },
-  { id: 'att_6', employeeId: 'EMP004', employeeName: 'Amit Verma', date: '2025-05-28', checkInTime: '09:00 AM', checkOutTime: '06:00 PM', status: 'Present', workHours: 9.00 },
+  { id: 'att_1', employeeId: 'EMP00123', employeeName: 'Rahul Patil', date: new Date().toISOString().split('T')[0], checkInTime: '09:02 AM', status: 'Present', workHours: 8.5, notes: 'On Time' },
 ];
 
 export const initialLeaveBalances: LeaveBalance[] = [
@@ -198,30 +113,6 @@ export const initialLeaveBalances: LeaveBalance[] = [
 
 export const initialLeaves: LeaveRequest[] = [
   {
-    id: 'lve_1',
-    employeeId: 'EMP003',
-    employeeName: 'Priya Sharma',
-    leaveType: 'Casual Leave',
-    startDate: '2025-06-02',
-    endDate: '2025-06-04',
-    totalDays: 3,
-    reason: 'Family function in native town',
-    status: 'Pending',
-    appliedOn: '2025-05-28',
-  },
-  {
-    id: 'lve_2',
-    employeeId: 'EMP004',
-    employeeName: 'Amit Verma',
-    leaveType: 'Sick Leave',
-    startDate: '2025-05-29',
-    endDate: '2025-05-29',
-    totalDays: 1,
-    reason: 'Medical checkup and routine consultation',
-    status: 'Pending',
-    appliedOn: '2025-05-27',
-  },
-  {
     id: 'lve_3',
     employeeId: 'EMP00123',
     employeeName: 'Rahul Patil',
@@ -241,10 +132,10 @@ export const initialPayroll: PayrollRecord[] = [
   {
     id: 'pay_2025_05',
     monthYear: 'May 2025',
-    totalEmployees: 248,
-    totalGrossSalary: 5500000,
-    totalDeductions: 625000,
-    totalNetSalary: 4875000,
+    totalEmployees: 2,
+    totalGrossSalary: 195000,
+    totalDeductions: 22000,
+    totalNetSalary: 173000,
     status: 'Processed',
     processedDate: '28 May 2025',
   }
@@ -276,7 +167,7 @@ export const initialAnnouncements: Announcement[] = [
   {
     id: 'anc_1',
     title: 'Annual Team Outing – Goa 2025',
-    content: 'We are excited to announce the annual team outing to Goa from 20th – 22nd June 2025! Stay tuned for itinerary details.',
+    content: 'We are excited to announce the annual team outing to Goa! Stay tuned for itinerary details.',
     priority: 'High',
     category: 'Event',
     targetAudience: 'All',
@@ -287,23 +178,13 @@ export const initialAnnouncements: Announcement[] = [
   {
     id: 'anc_2',
     title: 'New HR Policy Update',
-    content: 'Please review the newly updated Work From Home policy effective from 1st June 2025 in the Policies tab.',
+    content: 'Please review the newly updated Work From Home policy in the Policies tab.',
     priority: 'Medium',
     category: 'Policy',
     targetAudience: 'All',
     createdAt: '5 days ago',
     authorName: 'Admin User',
     isPinned: true,
-  },
-  {
-    id: 'anc_3',
-    title: 'Performance Appraisal 2025',
-    content: 'Performance appraisal for this cycle will begin from 5th June 2025. Please submit self-appraisals on time.',
-    priority: 'High',
-    category: 'Performance',
-    targetAudience: 'All',
-    createdAt: '1 week ago',
-    authorName: 'HR Manager',
   }
 ];
 
@@ -319,30 +200,21 @@ export const initialCompanyPolicies: CompanyPolicy[] = [
   { id: 'pol_1', title: 'Remote Work & Hybrid Policy 2025', category: 'Workplace', description: 'Guidelines on working from home, equipment allowance, and office core hours.', effectiveDate: '01 Jun 2025', version: 'v2.1' },
   { id: 'pol_2', title: 'Code of Conduct & Ethics', category: 'Compliance', description: 'Standards of behavior, diversity, inclusion, and anti-harassment policies.', effectiveDate: '01 Jan 2024', version: 'v1.4' },
   { id: 'pol_3', title: 'Leave & Absence Policy', category: 'HR Operations', description: 'Rules governing Casual Leave, Sick Leave, Maternity/Paternity, and Carry Forward.', effectiveDate: '01 Jan 2025', version: 'v3.0' },
-  { id: 'pol_4', title: 'Expense Reimbursement Guidelines', category: 'Finance', description: 'Eligible business expenses, claim process, and approval SLAs.', effectiveDate: '15 Feb 2025', version: 'v2.0' },
 ];
 
 export const initialCompanyAssets: CompanyAsset[] = [
   { id: 'ast_1', assetCode: 'AST-LAP-001', name: 'MacBook Pro M3 Max 16"', category: 'Laptop', serialNumber: 'C02GX901Q05D', status: 'Allocated', assignedToEmployeeId: 'EMP00123', assignedToEmployeeName: 'Rahul Patil', assignedDate: '12 Jan 2024' },
   { id: 'ast_2', assetCode: 'AST-MON-004', name: 'Dell UltraSharp 27" 4K Monitor', category: 'Monitor', serialNumber: 'CN-09876-74261', status: 'Allocated', assignedToEmployeeId: 'EMP00123', assignedToEmployeeName: 'Rahul Patil', assignedDate: '15 Jan 2024' },
-  { id: 'ast_3', assetCode: 'AST-LAP-002', name: 'ThinkPad X1 Carbon Gen 11', category: 'Laptop', serialNumber: 'PF-391X29', status: 'Available' },
-  { id: 'ast_4', assetCode: 'AST-MOB-001', name: 'iPhone 15 Pro 256GB', category: 'Mobile', serialNumber: 'DN-99210-91', status: 'Allocated', assignedToEmployeeId: 'EMP001', assignedToEmployeeName: 'Admin User', assignedDate: '01 Mar 2024' },
 ];
 
 export const initialRecruitment: JobPosting[] = [
-  { id: 'job_1', jobTitle: 'Senior React Developer', department: 'Engineering', location: 'Remote / Bengaluru', openings: 3, type: 'Full-Time', status: 'Open', postedDate: '15 May 2025' },
-  { id: 'job_2', jobTitle: 'QA Automation Lead', department: 'Quality Assurance', location: 'Pune', openings: 1, type: 'Full-Time', status: 'Open', postedDate: '18 May 2025' },
-  { id: 'job_3', jobTitle: 'HR Specialist', department: 'Human Resources', location: 'Mumbai', openings: 2, type: 'Full-Time', status: 'Closed', postedDate: '01 Apr 2025' },
+  { id: 'job_1', jobTitle: 'Senior React Developer', department: 'Engineering', location: 'Remote / Hybrid', openings: 2, type: 'Full-Time', status: 'Open', postedDate: '15 May 2025' },
 ];
 
-export const initialCandidates: Candidate[] = [
-  { id: 'cnd_1', jobId: 'job_1', jobTitle: 'Senior React Developer', name: 'Ananya Roy', email: 'ananya.roy@example.com', phone: '+91 98111 22233', experience: '5.5 Years', status: 'Interviewing', appliedDate: '18 May 2025' },
-  { id: 'cnd_2', jobId: 'job_2', jobTitle: 'QA Automation Lead', name: 'Karan Patel', email: 'karan.p@example.com', phone: '+91 98222 33344', experience: '7 Years', status: 'Offered', appliedDate: '20 May 2025' },
-];
+export const initialCandidates: Candidate[] = [];
 
 export const initialDocuments: HRDocument[] = [
   { id: 'doc_1', employeeId: 'EMP00123', employeeName: 'Rahul Patil', title: 'Employment Contract', category: 'Contract', fileUrl: '#', fileName: 'Rahul_Patil_Employment_Agreement.pdf', fileSize: '2.4 MB', uploadedBy: 'HR Admin', uploadedAt: '12 Jan 2024' },
-  { id: 'doc_2', employeeId: 'EMP00123', employeeName: 'Rahul Patil', title: 'Pan Card & Passport Copy', category: 'ID Proof', fileUrl: '#', fileName: 'Rahul_ID_Documents.pdf', fileSize: '1.8 MB', uploadedBy: 'Rahul Patil', uploadedAt: '13 Jan 2024' },
   { id: 'doc_3', title: 'CanaryNest Employee Handbook 2025', category: 'Company Policy', fileUrl: '#', fileName: 'Employee_Handbook_v2.pdf', fileSize: '4.5 MB', uploadedBy: 'HR Admin', uploadedAt: '01 Jan 2025' },
 ];
 
@@ -357,9 +229,8 @@ export const initialPerformance: PerformanceReview[] = [
     kpis: [
       { title: 'Automated Test Suite Coverage > 85%', target: '85%', status: 'Exceeded' },
       { title: 'Reduce Release Bug Rate < 2%', target: '< 2%', status: 'Met' },
-      { title: 'Sprint Delivery SLA', target: '98%', status: 'Met' }
     ],
-    feedback: 'Rahul has shown stellar performance in maintaining automated QA benchmarks and team collaboration.',
+    feedback: 'Rahul has shown stellar performance in maintaining automated QA benchmarks.',
     status: 'Completed',
     updatedLast: '15 Apr 2025'
   }
@@ -372,40 +243,22 @@ export const initialTraining: TrainingCourse[] = [
     description: 'Empowering senior individual contributors with key leadership and communication strategies.',
     category: 'Management',
     instructor: 'Dr. Neha Kulkarni',
-    duration: '6 Hours (Self-paced)',
+    duration: '6 Hours',
     status: 'In Progress',
     assignedEmployees: [
-      { employeeId: 'EMP00123', employeeName: 'Rahul Patil', status: 'Completed' },
-      { employeeId: 'EMP002', employeeName: 'Rohan Mehta', status: 'Assigned' }
-    ]
-  },
-  {
-    id: 'trn_2',
-    title: 'Cybersecurity & Data Privacy (GDPR/ISO)',
-    description: 'Mandatory annual compliance and data protection training for all employees.',
-    category: 'Compliance',
-    instructor: 'Security Ops Team',
-    duration: '2 Hours',
-    status: 'Upcoming',
-    assignedEmployees: [
-      { employeeId: 'EMP00123', employeeName: 'Rahul Patil', status: 'Assigned' }
+      { employeeId: 'EMP00123', employeeName: 'Rahul Patil', status: 'Completed' }
     ]
   }
 ];
 
 export const initialExpenses: ExpenseClaim[] = [
-  { id: 'exp_1', employeeId: 'EMP00123', employeeName: 'Rahul Patil', category: 'Software', amount: 3499, date: '22 May 2025', description: 'JetBrains All Products License annual renewal', status: 'Approved', approvedBy: 'Admin User' },
-  { id: 'exp_2', employeeId: 'EMP00123', employeeName: 'Rahul Patil', category: 'Travel', amount: 1850, date: '25 May 2025', description: 'Client meeting taxi fare Pune -> Mumbai', status: 'Pending' },
+  { id: 'exp_1', employeeId: 'EMP00123', employeeName: 'Rahul Patil', category: 'Software', amount: 3499, date: '22 May 2025', description: 'Software license renewal', status: 'Approved', approvedBy: 'Admin User' },
 ];
 
 export const initialAuditLogs: AuditLog[] = [
-  { id: 'log_1', action: 'ATTENDANCE_CHECKIN', performedBy: 'Rahul Patil', performedByEmail: 'wanipushpak71@gmail.com', details: 'Checked in at 09:02 AM from IP 115.240.12.8', timestamp: 'Today, 09:02 AM' },
-  { id: 'log_2', action: 'LEAVE_APPLICATION', performedBy: 'Priya Sharma', performedByEmail: 'priya.sharma@canarynest.com', details: 'Applied for Casual Leave (3 Days)', timestamp: 'Today, 08:45 AM' },
-  { id: 'log_3', action: 'PAYROLL_PROCESSED', performedBy: 'Admin User', performedByEmail: 'admin@canarynest.com', details: 'Processed May 2025 payroll for 248 employees (₹48,75,000)', timestamp: 'Yesterday, 06:30 PM' },
+  { id: 'log_1', action: 'ATTENDANCE_CHECKIN', performedBy: 'Rahul Patil', performedByEmail: 'wanipushpak71@gmail.com', details: 'Checked in at 09:02 AM', timestamp: 'Today, 09:02 AM' },
 ];
 
 export const initialNotifications: AppNotification[] = [
-  { id: 'notif_1', userId: 'admin_user_001', title: 'New Leave Request', message: 'Priya Sharma applied for 3 days Casual Leave.', link: '/admin/leaves', isRead: false, createdAt: '10 mins ago', type: 'info' },
-  { id: 'notif_2', userId: 'admin_user_001', title: 'Expense Claim Submitted', message: 'Rahul Patil submitted expense claim for ₹1,850.', link: '/admin/expenses', isRead: false, createdAt: '1 hour ago', type: 'info' },
-  { id: 'notif_3', userId: 'employee_user_001', title: 'Payslip Available', message: 'Your payslip for May 2025 is ready to view & download.', link: '/employee/payslips', isRead: false, createdAt: '2 hours ago', type: 'success' },
+  { id: 'notif_1', userId: 'employee_user_001', title: 'Payslip Available', message: 'Your payslip for May 2025 is ready to view & download.', link: '/employee/payslips', isRead: false, createdAt: '2 hours ago', type: 'success' },
 ];
