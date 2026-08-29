@@ -1,0 +1,147 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isHrAdmin() {
+      return isAuthenticated() && (
+        getUserData().role == 'HR_ADMIN' || 
+        request.auth.token.role == 'HR_ADMIN'
+      );
+    }
+    
+    function isOwner(employeeId) {
+      return isAuthenticated() && (
+        request.auth.uid == employeeId || 
+        getUserData().employeeId == employeeId
+      );
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isHrAdmin());
+      allow write: if isAuthenticated() && (request.auth.uid == userId || isHrAdmin());
+    }
+
+    // Employees Collection
+    match /employees/{employeeId} {
+      allow read: if isAuthenticated() && (isOwner(employeeId) || isHrAdmin());
+      allow write: if isHrAdmin();
+    }
+
+    // Departments Collection
+    match /departments/{departmentId} {
+      allow read: if isAuthenticated();
+      allow write: if isHrAdmin();
+    }
+
+    // Attendance Collection
+    match /attendance/{attendanceId} {
+      allow read: if isAuthenticated() && (resource.data.employeeId == request.auth.uid || isHrAdmin());
+      allow create, update: if isAuthenticated() && (request.resource.data.employeeId == request.auth.uid || isHrAdmin());
+      allow delete: if isHrAdmin();
+    }
+
+    // Leaves Collection
+    match /leaves/{leaveId} {
+      allow read: if isAuthenticated() && (resource.data.employeeId == request.auth.uid || isHrAdmin());
+      allow create: if isAuthenticated() && request.resource.data.employeeId == request.auth.uid;
+      allow update, delete: if isHrAdmin() || (isAuthenticated() && resource.data.employeeId == request.auth.uid && resource.data.status == 'Pending');
+    }
+
+    // Leave Balances Collection
+    match /leaveBalances/{balanceId} {
+      allow read: if isAuthenticated() && (balanceId == request.auth.uid || resource.data.employeeId == request.auth.uid || isHrAdmin());
+      allow write: if isHrAdmin();
+    }
+
+    // Payroll & Payslips
+    match /payroll/{payrollId} {
+      allow read, write: if isHrAdmin();
+    }
+    
+    match /payslips/{payslipId} {
+      allow read: if isAuthenticated() && (resource.data.employeeId == request.auth.uid || isHrAdmin());
+      allow write: if isHrAdmin();
+    }
+
+    // Documents
+    match /documents/{docId} {
+      allow read: if isAuthenticated() && (resource.data.employeeId == request.auth.uid || resource.data.category == 'Company Policy' || isHrAdmin());
+      allow create: if isAuthenticated() && (request.resource.data.employeeId == request.auth.uid || isHrAdmin());
+      allow update, delete: if isHrAdmin();
+    }
+
+    // Performance & Training
+    match /performance/{perfId} {
+      allow read: if isAuthenticated() && (resource.data.employeeId == request.auth.uid || isHrAdmin());
+      allow write: if isAuthenticated() && (resource.data.employeeId == request.auth.uid || isHrAdmin());
+    }
+
+    match /training/{trainingId} {
+      allow read: if isAuthenticated();
+      allow write: if isHrAdmin();
+    }
+
+    // Expenses
+    match /expenses/{expenseId} {
+      allow read: if isAuthenticated() && (resource.data.employeeId == request.auth.uid || isHrAdmin());
+      allow create: if isAuthenticated() && request.resource.data.employeeId == request.auth.uid;
+      allow update, delete: if isHrAdmin();
+    }
+
+    // Public / Shared Information (Announcements, Holidays, Policies)
+    match /announcements/{announcementId} {
+      allow read: if isAuthenticated();
+      allow write: if isHrAdmin();
+    }
+
+    match /holidays/{holidayId} {
+      allow read: if isAuthenticated();
+      allow write: if isHrAdmin();
+    }
+
+    match /policies/{policyId} {
+      allow read: if isAuthenticated();
+      allow write: if isHrAdmin();
+    }
+
+    // Assets, Recruitment, Candidates, Audit Logs, Settings
+    match /assets/{assetId} {
+      allow read: if isAuthenticated() && (resource.data.assignedToEmployeeId == request.auth.uid || isHrAdmin());
+      allow write: if isHrAdmin();
+    }
+
+    match /recruitment/{jobId} {
+      allow read: if isAuthenticated();
+      allow write: if isHrAdmin();
+    }
+
+    match /candidates/{candidateId} {
+      allow read, write: if isHrAdmin();
+    }
+
+    match /notifications/{notificationId} {
+      allow read, update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create, delete: if isAuthenticated();
+    }
+
+    match /auditLogs/{logId} {
+      allow read: if isHrAdmin();
+      allow create: if isAuthenticated();
+    }
+
+    match /settings/{settingId} {
+      allow read: if isAuthenticated();
+      allow write: if isHrAdmin();
+    }
+  }
+}
