@@ -30,7 +30,7 @@ export const initialUsers: UserProfile[] = [
   },
   {
     uid: 'employee_user_001',
-    email: 'rahul.patil@canarynest.com',
+    email: 'wanipushpak71@gmail.com',
     role: 'EMPLOYEE',
     employeeId: 'EMP00123',
     displayName: 'Rahul Patil',
@@ -55,7 +55,7 @@ export const initialEmployees: Employee[] = [
     employeeCode: 'EMP00123',
     firstName: 'Rahul',
     lastName: 'Patil',
-    email: 'rahul.patil@canarynest.com',
+    email: 'wanipushpak71@gmail.com',
     phone: '+91 98765 43210',
     designation: 'QA Engineer',
     departmentId: 'dept_2',
@@ -399,7 +399,7 @@ export const initialExpenses: ExpenseClaim[] = [
 ];
 
 export const initialAuditLogs: AuditLog[] = [
-  { id: 'log_1', action: 'ATTENDANCE_CHECKIN', performedBy: 'Rahul Patil', performedByEmail: 'rahul.patil@canarynest.com', details: 'Checked in at 09:02 AM from IP 115.240.12.8', timestamp: 'Today, 09:02 AM' },
+  { id: 'log_1', action: 'ATTENDANCE_CHECKIN', performedBy: 'Rahul Patil', performedByEmail: 'wanipushpak71@gmail.com', details: 'Checked in at 09:02 AM from IP 115.240.12.8', timestamp: 'Today, 09:02 AM' },
   { id: 'log_2', action: 'LEAVE_APPLICATION', performedBy: 'Priya Sharma', performedByEmail: 'priya.sharma@canarynest.com', details: 'Applied for Casual Leave (3 Days)', timestamp: 'Today, 08:45 AM' },
   { id: 'log_3', action: 'PAYROLL_PROCESSED', performedBy: 'Admin User', performedByEmail: 'admin@canarynest.com', details: 'Processed May 2025 payroll for 248 employees (₹48,75,000)', timestamp: 'Yesterday, 06:30 PM' },
 ];

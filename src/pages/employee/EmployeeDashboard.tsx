@@ -97,7 +97,7 @@ export const EmployeeDashboard: React.FC = () => {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-400 font-semibold">Email:</span>
-              <span className="font-bold text-slate-700 truncate">{userProfile?.email || 'rahul.patil@canarynest.com'}</span>
+              <span className="font-bold text-slate-700 truncate">{userProfile?.email || 'wanipushpak71@gmail.com'}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-400 font-semibold">Phone:</span>

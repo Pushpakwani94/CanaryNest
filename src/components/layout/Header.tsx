@@ -48,15 +48,17 @@ export const Header: React.FC<{ title?: string }> = () => {
           <span>28 May 2025, Wednesday</span>
         </div>
 
-        {/* Role Quick Switch Button */}
-        <button
-          onClick={() => demoLogin(role === 'HR_ADMIN' ? 'EMPLOYEE' : 'HR_ADMIN')}
-          title="Toggle view mode"
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 text-brand-600 border border-brand-200 rounded-xl text-xs font-bold transition-all shadow-sm"
-        >
-          {role === 'HR_ADMIN' ? <UserCheck className="w-3.5 h-3.5" /> : <ShieldAlert className="w-3.5 h-3.5" />}
-          <span>Switch to {role === 'HR_ADMIN' ? 'Employee View' : 'HR Admin View'}</span>
-        </button>
+        {/* Role Quick Switch Button (Only visible in HR Admin mode) */}
+        {role === 'HR_ADMIN' && (
+          <button
+            onClick={() => demoLogin('EMPLOYEE')}
+            title="Toggle view mode"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 text-brand-600 border border-brand-200 rounded-xl text-xs font-bold transition-all shadow-sm"
+          >
+            <UserCheck className="w-3.5 h-3.5" />
+            <span>Switch to Employee View</span>
+          </button>
+        )}
 
         {/* Bell Notifications Dropdown */}
         <div className="relative">

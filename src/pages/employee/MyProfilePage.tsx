@@ -96,7 +96,7 @@ export const MyProfilePage: React.FC = () => {
 
           <div>
             <label className="block text-xs font-semibold text-slate-400">Work Email</label>
-            <p className="text-xs font-bold text-slate-800 mt-0.5">{userProfile?.email || 'rahul.patil@canarynest.com'}</p>
+            <p className="text-xs font-bold text-slate-800 mt-0.5">{userProfile?.email || 'wanipushpak71@gmail.com'}</p>
           </div>
 
           <div>

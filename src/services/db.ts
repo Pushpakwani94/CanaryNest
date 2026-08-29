@@ -4,7 +4,7 @@ import {
 } from 'firebase/firestore';
 import { db, isFirebaseConfigured } from '../config/firebase';
 import * as seedData from '../utils/seedData';
-import { Employee, Department, AttendanceRecord, LeaveRequest, LeaveBalance, PayrollRecord, Payslip, HRDocument, PerformanceReview, TrainingCourse, ExpenseClaim, Announcement, Holiday, CompanyPolicy, CompanyAsset, JobPosting, Candidate, AppNotification, AuditLog, CompanySettings } from '../types';
+import { Employee, Department, AttendanceRecord, LeaveRequest, LeaveBalance, PayrollRecord, Payslip, HRDocument, PerformanceReview, TrainingCourse, ExpenseClaim, Announcement, Holiday, CompanyPolicy, CompanyAsset, JobPosting, Candidate, AppNotification, AuditLog, CompanySettings, UserProfile } from '../types';
 
 // In-Memory Local State Backup (Pre-populated from seedData)
 class LocalStore {
