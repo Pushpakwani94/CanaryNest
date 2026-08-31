@@ -25,8 +25,16 @@ export const EmployeeDashboard: React.FC = () => {
   const [latestPayslip, setLatestPayslip] = useState<Payslip | null>(null);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [holidays, setHolidays] = useState<Holiday[]>([]);
+  const [currentEmp, setCurrentEmp] = useState<any>(null);
 
   useEffect(() => {
+    const unsubEmp = dataService.getEmployees((list) => {
+      const match = list.find(e => 
+        e.id === userProfile?.employeeId || 
+        e.email.toLowerCase() === userProfile?.email?.toLowerCase()
+      );
+      if (match) setCurrentEmp(match);
+    });
     const unsubAtt = dataService.getAttendance(setAttendanceLogs);
     const unsubAnc = dataService.getAnnouncements(setAnnouncements);
     const unsubHol = dataService.getHolidays(setHolidays);
@@ -35,16 +43,17 @@ export const EmployeeDashboard: React.FC = () => {
     });
 
     return () => {
+      if (typeof unsubEmp === 'function') unsubEmp();
       if (typeof unsubAtt === 'function') unsubAtt();
       if (typeof unsubAnc === 'function') unsubAnc();
       if (typeof unsubHol === 'function') unsubHol();
       if (typeof unsubPs === 'function') unsubPs();
     };
-  }, []);
+  }, [userProfile]);
 
   const handleToggleAttendance = async () => {
-    const empId = userProfile?.employeeId || 'EMP00123';
-    const empName = userProfile?.displayName || 'Rahul Patil';
+    const empId = currentEmp?.id || userProfile?.employeeId || 'EMP00123';
+    const empName = currentEmp ? `${currentEmp.firstName} ${currentEmp.lastName}` : (userProfile?.displayName || 'Employee');
 
     if (isCheckedIn && activeAttendanceId) {
       await dataService.checkOut(activeAttendanceId);
@@ -64,6 +73,17 @@ export const EmployeeDashboard: React.FC = () => {
     { name: 'WFH', value: 1, color: '#3b82f6' },
   ];
 
+  const displayName = currentEmp ? `${currentEmp.firstName} ${currentEmp.lastName}` : (userProfile?.displayName || 'Rahul Patil');
+  const designation = currentEmp?.designation || 'QA Engineer';
+  const departmentName = currentEmp?.departmentName || 'Quality Assurance';
+  const empCode = currentEmp?.employeeCode || userProfile?.employeeId || 'EMP00123';
+  const empStatus = currentEmp?.status || 'Active';
+  const email = currentEmp?.email || userProfile?.email || 'wanipushpak71@gmail.com';
+  const phone = currentEmp?.phone || '+91 98765 43210';
+  const joiningDate = currentEmp?.joiningDate || '12 Jan 2024';
+  const location = currentEmp?.location || 'Pune, Maharashtra';
+  const photo = currentEmp?.photoURL || userProfile?.photoURL || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80';
+
   return (
     <div className="space-y-6">
 
@@ -74,42 +94,42 @@ export const EmployeeDashboard: React.FC = () => {
         <Card className="lg:col-span-4 flex flex-col justify-between relative overflow-hidden">
           <div className="flex items-start gap-4 mb-4">
             <img
-              src={userProfile?.photoURL || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80'}
-              alt="Rahul Patil"
+              src={photo}
+              alt={displayName}
               className="w-20 h-20 rounded-full object-cover border-4 border-slate-50 shadow-md shrink-0"
             />
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h3 className="text-xl font-black text-slate-800 tracking-tight truncate">
-                  {userProfile?.displayName || 'Rahul Patil'}
+                  {displayName}
                 </h3>
-                <Badge variant="green" size="sm">Active</Badge>
+                <Badge variant={empStatus === 'Active' ? 'green' : 'orange'} size="sm">{empStatus}</Badge>
               </div>
-              <p className="text-xs font-bold text-brand-600">QA Engineer</p>
-              <p className="text-[11px] text-slate-400 font-medium truncate">Quality Assurance Department</p>
+              <p className="text-xs font-bold text-brand-600">{designation}</p>
+              <p className="text-[11px] text-slate-400 font-medium truncate">{departmentName} Department</p>
             </div>
           </div>
 
           <div className="space-y-2 pt-3 border-t border-slate-100 text-xs font-medium text-slate-600">
             <div className="flex items-center justify-between">
               <span className="text-slate-400 font-semibold">Employee ID:</span>
-              <span className="font-extrabold text-slate-800">EMP00123</span>
+              <span className="font-extrabold text-slate-800">{empCode}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-400 font-semibold">Email:</span>
-              <span className="font-bold text-slate-700 truncate">{userProfile?.email || 'wanipushpak71@gmail.com'}</span>
+              <span className="font-bold text-slate-700 truncate">{email}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-400 font-semibold">Phone:</span>
-              <span className="font-bold text-slate-700">+91 98765 43210</span>
+              <span className="font-bold text-slate-700">{phone}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-400 font-semibold">Joining Date:</span>
-              <span className="font-bold text-slate-700">12 Jan 2024</span>
+              <span className="font-bold text-slate-700">{joiningDate}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-400 font-semibold">Location:</span>
-              <span className="font-bold text-slate-700">Pune, Maharashtra</span>
+              <span className="font-bold text-slate-700">{location}</span>
             </div>
           </div>
 

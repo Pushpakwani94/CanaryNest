@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CalendarDays, Send, Palmtree, HeartPulse, Star, Clock } from 'lucide-react';
+import { CalendarDays, Send, Palmtree, HeartPulse, Star, Clock, CheckCircle2 } from 'lucide-react';
 import { Button, Card, Badge } from '../../components/common/UIComponents';
-import { dataService } from '../../services/db';
+import { dataService, localStore } from '../../services/db';
 import { useAuth } from '../../context/AuthContext';
+import { LeaveBalance } from '../../types';
 
 export const ApplyLeavePage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,10 +16,29 @@ export const ApplyLeavePage: React.FC = () => {
   const [reason, setReason] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
+  const [balance, setBalance] = useState<LeaveBalance | null>(null);
+
+  useEffect(() => {
+    const empId = userProfile?.employeeId || 'EMP00123';
+    const found = localStore.leaveBalances.find(b => b.employeeId === empId) || localStore.leaveBalances[0];
+    if (found) setBalance(found);
+  }, [userProfile]);
+
+  const calcTotalDays = () => {
+    if (!startDate || !endDate) return 1;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = end.getTime() - start.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 3600 * 24)) + 1;
+    return diffDays > 0 ? diffDays : 1;
+  };
+
+  const totalDays = calcTotalDays();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const empId = userProfile?.employeeId || 'EMP00123';
-    const empName = userProfile?.displayName || 'Rahul Patil';
+    const empName = userProfile?.displayName || 'Employee';
 
     await dataService.applyLeave({
       employeeId: empId,
@@ -26,7 +46,7 @@ export const ApplyLeavePage: React.FC = () => {
       leaveType,
       startDate,
       endDate,
-      totalDays: 2,
+      totalDays,
       reason,
     });
 
@@ -35,6 +55,11 @@ export const ApplyLeavePage: React.FC = () => {
       navigate('/employee/leaves');
     }, 1500);
   };
+
+  const clAvail = balance?.casualLeave?.available ?? 6.0;
+  const slAvail = balance?.sickLeave?.available ?? 4.0;
+  const plAvail = balance?.privilegeLeave?.available ?? 10.0;
+  const coAvail = balance?.compOff?.available ?? 2.0;
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -45,28 +70,33 @@ export const ApplyLeavePage: React.FC = () => {
       </div>
 
       {submitted && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-800 font-bold text-xs">
-          ✅ Leave application submitted successfully! Redirecting to My Leaves...
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-800 font-bold text-xs flex items-center gap-2">
+          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+          🎉 Leave application submitted successfully! Redirecting to My Leave History...
         </div>
       )}
 
       {/* Leave Balance Quick Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-2xl text-center">
+        <div className={`p-3 border rounded-2xl text-center transition-all ${leaveType === 'Casual Leave' ? 'bg-emerald-100 border-emerald-400 ring-2 ring-emerald-300' : 'bg-emerald-50/60 border-emerald-100'}`}>
           <p className="text-[11px] font-bold text-emerald-700">Casual Leave</p>
-          <h4 className="text-xl font-black text-emerald-800">6.0</h4>
+          <h4 className="text-xl font-black text-emerald-800">{clAvail.toFixed(1)}</h4>
+          <span className="text-[10px] text-emerald-600 font-semibold">Days Available</span>
         </div>
-        <div className="p-3 bg-rose-50 border border-rose-100 rounded-2xl text-center">
+        <div className={`p-3 border rounded-2xl text-center transition-all ${leaveType === 'Sick Leave' ? 'bg-rose-100 border-rose-400 ring-2 ring-rose-300' : 'bg-rose-50/60 border-rose-100'}`}>
           <p className="text-[11px] font-bold text-rose-700">Sick Leave</p>
-          <h4 className="text-xl font-black text-rose-800">4.0</h4>
+          <h4 className="text-xl font-black text-rose-800">{slAvail.toFixed(1)}</h4>
+          <span className="text-[10px] text-rose-600 font-semibold">Days Available</span>
         </div>
-        <div className="p-3 bg-blue-50 border border-blue-100 rounded-2xl text-center">
+        <div className={`p-3 border rounded-2xl text-center transition-all ${leaveType === 'Privilege Leave' ? 'bg-blue-100 border-blue-400 ring-2 ring-blue-300' : 'bg-blue-50/60 border-blue-100'}`}>
           <p className="text-[11px] font-bold text-blue-700">Privilege Leave</p>
-          <h4 className="text-xl font-black text-blue-800">10.0</h4>
+          <h4 className="text-xl font-black text-blue-800">{plAvail.toFixed(1)}</h4>
+          <span className="text-[10px] text-blue-600 font-semibold">Days Available</span>
         </div>
-        <div className="p-3 bg-amber-50 border border-amber-100 rounded-2xl text-center">
+        <div className={`p-3 border rounded-2xl text-center transition-all ${leaveType === 'Comp Off' ? 'bg-amber-100 border-amber-400 ring-2 ring-amber-300' : 'bg-amber-50/60 border-amber-100'}`}>
           <p className="text-[11px] font-bold text-amber-700">Comp Off</p>
-          <h4 className="text-xl font-black text-amber-800">2.0</h4>
+          <h4 className="text-xl font-black text-amber-800">{coAvail.toFixed(1)}</h4>
+          <span className="text-[10px] text-amber-600 font-semibold">Days Available</span>
         </div>
       </div>
 
@@ -110,7 +140,7 @@ export const ApplyLeavePage: React.FC = () => {
                 required
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-400 font-medium"
+                className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-400 font-medium text-slate-800"
               />
             </div>
             <div>
@@ -120,9 +150,16 @@ export const ApplyLeavePage: React.FC = () => {
                 required
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-400 font-medium"
+                className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-400 font-medium text-slate-800"
               />
             </div>
+          </div>
+
+          <div className="p-3 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center justify-between text-xs">
+            <span className="font-bold text-slate-600">Calculated Leave Duration:</span>
+            <span className="font-black text-brand-600 bg-orange-50 px-2.5 py-1 rounded-lg border border-brand-200">
+              {totalDays} {totalDays === 1 ? 'Day' : 'Days'}
+            </span>
           </div>
 
           <div>
@@ -133,7 +170,7 @@ export const ApplyLeavePage: React.FC = () => {
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="State clear reason for your leave request..."
-              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-400 font-medium"
+              className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-400 font-medium text-slate-800"
             />
           </div>
 

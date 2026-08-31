@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Mail, Phone, MapPin, Building2, Calendar, ShieldCheck, Edit, Camera, Save, Lock, CheckCircle2 } from 'lucide-react';
 import { Button, Card, Badge } from '../../components/common/UIComponents';
 import { useAuth } from '../../context/AuthContext';
 import { dataService } from '../../services/db';
+import { Employee } from '../../types';
 
 export const MyProfilePage: React.FC = () => {
   const { userProfile } = useAuth();
+  const [empRecord, setEmpRecord] = useState<Employee | null>(null);
+
   const [isEditing, setIsEditing] = useState(false);
   const [phone, setPhone] = useState('+91 98765 43210');
   const [location, setLocation] = useState('Pune, Maharashtra');
@@ -16,6 +19,33 @@ export const MyProfilePage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passError, setPassError] = useState('');
   const [passSuccess, setPassSuccess] = useState('');
+  const [saveDetailsMsg, setSaveDetailsMsg] = useState('');
+
+  useEffect(() => {
+    const unsub = dataService.getEmployees((list) => {
+      const found = list.find(e => 
+        e.id === userProfile?.employeeId || 
+        e.email.toLowerCase() === userProfile?.email?.toLowerCase()
+      );
+      if (found) {
+        setEmpRecord(found);
+        setPhone(found.phone);
+        setLocation(found.location);
+      }
+    });
+    return () => { if (typeof unsub === 'function') unsub(); };
+  }, [userProfile]);
+
+  const handleToggleEdit = async () => {
+    if (isEditing && empRecord) {
+      await dataService.updateEmployee(empRecord.id, { phone, location });
+      setSaveDetailsMsg('Contact details updated successfully!');
+      setTimeout(() => setSaveDetailsMsg(''), 3000);
+      setIsEditing(false);
+    } else {
+      setIsEditing(true);
+    }
+  };
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,30 +72,46 @@ export const MyProfilePage: React.FC = () => {
     }
   };
 
+  const displayName = empRecord ? `${empRecord.firstName} ${empRecord.lastName}` : (userProfile?.displayName || 'Employee');
+  const designation = empRecord?.designation || 'QA Engineer';
+  const departmentName = empRecord?.departmentName || 'Quality Assurance';
+  const empCode = empRecord?.employeeCode || userProfile?.employeeId || 'EMP00123';
+  const empStatus = empRecord?.status || 'Active';
+  const joiningDate = empRecord?.joiningDate || '12 Jan 2024';
+  const email = empRecord?.email || userProfile?.email || 'wanipushpak71@gmail.com';
+  const photo = empRecord?.photoURL || userProfile?.photoURL || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80';
+
   return (
     <div className="space-y-6 max-w-4xl">
       
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">My Profile</h1>
-          <p className="text-xs text-slate-400 font-medium">View and update your personal details and portal password.</p>
+          <p className="text-xs text-slate-400 font-medium">View and update your live employee profile and credentials.</p>
         </div>
         <Button
           variant={isEditing ? 'success' : 'outline'}
           icon={<Edit className="w-4 h-4" />}
-          onClick={() => setIsEditing(!isEditing)}
+          onClick={handleToggleEdit}
         >
-          {isEditing ? 'Save Details' : 'Edit Contact Details'}
+          {isEditing ? 'Save Changes' : 'Edit Contact Details'}
         </Button>
       </div>
+
+      {saveDetailsMsg && (
+        <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-bold text-emerald-700 flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+          {saveDetailsMsg}
+        </div>
+      )}
 
       {/* Main Profile Header Card */}
       <Card className="p-6">
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div className="relative group">
             <img
-              src={userProfile?.photoURL || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80'}
-              alt={userProfile?.displayName}
+              src={photo}
+              alt={displayName}
               className="w-28 h-28 rounded-full object-cover border-4 border-slate-100 shadow-md"
             />
             <button className="absolute bottom-0 right-0 p-2 bg-brand-500 text-white rounded-full shadow-md hover:bg-brand-600 transition-colors">
@@ -75,12 +121,12 @@ export const MyProfilePage: React.FC = () => {
 
           <div className="space-y-1 text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-2">
-              <h2 className="text-2xl font-black text-slate-800">{userProfile?.displayName || 'Rahul Patil'}</h2>
-              <Badge variant="green">Active</Badge>
+              <h2 className="text-2xl font-black text-slate-800">{displayName}</h2>
+              <Badge variant={empStatus === 'Active' ? 'green' : 'orange'}>{empStatus}</Badge>
             </div>
-            <p className="text-sm font-bold text-brand-600">QA Engineer</p>
-            <p className="text-xs text-slate-500 font-medium">Quality Assurance Department • Employee Code: {userProfile?.employeeId || 'EMP00123'}</p>
-            <p className="text-xs text-slate-400 font-medium mt-2">Joined 12 Jan 2024</p>
+            <p className="text-sm font-bold text-brand-600">{designation}</p>
+            <p className="text-xs text-slate-500 font-medium">{departmentName} Department • Employee Code: {empCode}</p>
+            <p className="text-xs text-slate-400 font-medium mt-2">Joined {joiningDate}</p>
           </div>
         </div>
       </Card>
@@ -96,7 +142,7 @@ export const MyProfilePage: React.FC = () => {
 
           <div>
             <label className="block text-xs font-semibold text-slate-400">Work Email</label>
-            <p className="text-xs font-bold text-slate-800 mt-0.5">{userProfile?.email || 'wanipushpak71@gmail.com'}</p>
+            <p className="text-xs font-bold text-slate-800 mt-0.5">{email}</p>
           </div>
 
           <div>
@@ -106,7 +152,7 @@ export const MyProfilePage: React.FC = () => {
                 type="text"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full mt-1 px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl"
+                className="w-full mt-1 px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-400 font-bold text-slate-800"
               />
             ) : (
               <p className="text-xs font-bold text-slate-800 mt-0.5">{phone}</p>
@@ -120,7 +166,7 @@ export const MyProfilePage: React.FC = () => {
                 type="text"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full mt-1 px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl"
+                className="w-full mt-1 px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-400 font-bold text-slate-800"
               />
             ) : (
               <p className="text-xs font-bold text-slate-800 mt-0.5">{location}</p>
@@ -136,17 +182,17 @@ export const MyProfilePage: React.FC = () => {
 
           <div>
             <label className="block text-xs font-semibold text-slate-400">Bank Name</label>
-            <p className="text-xs font-bold text-slate-800 mt-0.5">HDFC Bank Ltd.</p>
+            <p className="text-xs font-bold text-slate-800 mt-0.5">{empRecord?.bankDetails?.bankName || 'HDFC Bank Ltd.'}</p>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-400">Account Number</label>
-            <p className="text-xs font-bold text-slate-800 mt-0.5">•••• •••• 987654</p>
+            <p className="text-xs font-bold text-slate-800 mt-0.5">{empRecord?.bankDetails?.accountNumber || '•••• •••• 987654'}</p>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-400">IFSC Code</label>
-            <p className="text-xs font-bold text-slate-800 mt-0.5">HDFC0001234</p>
+            <p className="text-xs font-bold text-slate-800 mt-0.5">{empRecord?.bankDetails?.ifscCode || 'HDFC0001234'}</p>
           </div>
         </Card>
 

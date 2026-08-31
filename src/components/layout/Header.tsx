@@ -1,15 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Bell, Mail, Calendar as CalendarIcon, UserCheck, ShieldAlert } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { dataService } from '../../services/db';
 
 export const Header: React.FC<{ title?: string }> = () => {
   const { userProfile, role, demoLogin } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [currentEmp, setCurrentEmp] = useState<any>(null);
+
+  useEffect(() => {
+    const unsub = dataService.getEmployees((list) => {
+      const match = list.find(e => 
+        e.id === userProfile?.employeeId || 
+        e.email.toLowerCase() === userProfile?.email?.toLowerCase()
+      );
+      if (match) setCurrentEmp(match);
+    });
+    return () => { if (typeof unsub === 'function') unsub(); };
+  }, [userProfile]);
+
+  const userFirstName = currentEmp?.firstName || userProfile?.displayName?.split(' ')[0] || 'Employee';
 
   const notifications = [
-    { title: 'New Leave Request', text: 'Priya Sharma applied for Casual Leave.', time: '10m ago' },
-    { title: 'Expense Claim Submitted', text: 'Rahul Patil requested reimbursement for ₹1,850.', time: '1h ago' },
-    { title: 'Payroll Ready', text: 'May 2025 payroll summary is ready.', time: '3h ago' },
+    { title: 'New Leave Request', text: 'Employee applied for Casual Leave.', time: '10m ago' },
+    { title: 'Expense Claim Submitted', text: 'Expense claim requested for reimbursement.', time: '1h ago' },
+    { title: 'Payroll Ready', text: 'Monthly payroll summary is ready.', time: '3h ago' },
   ];
 
   return (
@@ -20,7 +35,7 @@ export const Header: React.FC<{ title?: string }> = () => {
           {role === 'HR_ADMIN' ? (
             <>Welcome back, Admin! 👋</>
           ) : (
-            <>Good Morning, {userProfile?.displayName?.split(' ')[0] || 'Rahul'}! 👋</>
+            <>Good Morning, {userFirstName}! 👋</>
           )}
         </h2>
         <p className="text-xs text-slate-400 font-medium mt-0.5">
@@ -82,33 +97,23 @@ export const Header: React.FC<{ title?: string }> = () => {
           {showNotifications && (
             <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-dropdown border border-slate-100 p-4 z-50 animate-in fade-in slide-in-from-top-2">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
-                <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">Notifications</h4>
-                <span className="text-[10px] font-bold text-brand-500 bg-orange-50 px-2 py-0.5 rounded-full">3 New</span>
+                <h3 className="font-extrabold text-xs text-slate-800 uppercase tracking-wider">Notifications</h3>
+                <span className="text-[10px] text-brand-600 font-bold cursor-pointer hover:underline">Mark all as read</span>
               </div>
-              <div className="space-y-2.5">
-                {notifications.map((n, idx) => (
-                  <div key={idx} className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100/70 transition-colors">
-                    <p className="text-xs font-bold text-slate-800">{n.title}</p>
-                    <p className="text-xs text-slate-500 mt-0.5 leading-snug">{n.text}</p>
-                    <span className="text-[10px] font-semibold text-slate-400 mt-1 block">{n.time}</span>
+              <div className="space-y-3">
+                {notifications.map((n, i) => (
+                  <div key={i} className="flex gap-3 text-xs p-2 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+                    <div className="w-2 h-2 rounded-full bg-brand-500 mt-1 shrink-0" />
+                    <div>
+                      <p className="font-bold text-slate-800">{n.title}</p>
+                      <p className="text-[11px] text-slate-500">{n.text}</p>
+                      <span className="text-[10px] text-slate-400 font-medium mt-1 block">{n.time}</span>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           )}
-        </div>
-
-        {/* User Pill */}
-        <div className="flex items-center gap-3 pl-2 border-l border-slate-200">
-          <img
-            src={userProfile?.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'}
-            alt="User avatar"
-            className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
-          />
-          <div className="hidden xl:block">
-            <p className="text-xs font-extrabold text-slate-800 leading-tight">{userProfile?.displayName}</p>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{role === 'HR_ADMIN' ? 'Super Admin' : 'QA Engineer'}</p>
-          </div>
         </div>
       </div>
     </header>
